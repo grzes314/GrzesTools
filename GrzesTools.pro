@@ -4,7 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    bignum.cpp \
+    sources/bignum.cpp \
     tests/BigNumTest.cpp
 
 
@@ -14,4 +14,4 @@ INCLUDEPATH += /usr/include/gtest
 DEPENDPATH += /usr/include/gtest
 
 HEADERS += \
-    bignum.h
+    headers/bignum.h
