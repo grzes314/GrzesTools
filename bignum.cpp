@@ -1,5 +1,15 @@
 #include "bignum.h"
 
-BigNum::BigNum()
+namespace grzes
 {
+
+BigNum::BigNum(int)
+{
+}
+
+int BigNum::toInt() const
+{
+    throw "not implemented yet";
+}
+
 }

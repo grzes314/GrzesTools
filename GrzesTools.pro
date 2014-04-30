@@ -4,7 +4,8 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    bignum.cpp
+    bignum.cpp \
+    tests/BigNumTest.cpp
 
 
 LIBS += -L/usr/lib64/ -lgtest
