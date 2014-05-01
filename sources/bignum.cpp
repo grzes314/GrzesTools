@@ -4,6 +4,7 @@
 namespace grzes
 {
 using std::vector;
+using std::string;
 
 template <typename inttype>
 void BigNum::setSign(inttype number)
@@ -151,7 +152,13 @@ int BigNum::signum() const
     }
 }
 
-BigNum::BigNum(BigNum::Sign s, std::vector<BigNum::Digit> ds)
+string BigNum::getDisplay() const
+{
+    vector<char> vec = getDisplayAsVector();
+    return string(vec.begin(), vec.end());
+}
+
+BigNum::BigNum(BigNum::Sign s, vector<BigNum::Digit> ds)
     : digits(ds)
     , sign(s)
 {
@@ -192,6 +199,34 @@ void BigNum::ensureZeroIsOneDigit()
         digits.clear();
         digits.push_back(0);
     }
+}
+
+std::vector<char> BigNum::getDisplayAsVector() const
+{
+    vector<char> res;
+    for (auto it = digits.rbegin(); it != digits.rend(); ++it)
+    {
+        vector<char> d = getDigitReversed(*it);
+        res.insert(res.end(), d.rbegin(), d.rend());
+    }
+    return res;
+}
+
+char int2char(int c)
+{
+    return c + '0';
+}
+
+std::vector<char> BigNum::getDigitReversed(BigNum::Digit d) const
+{
+    vector<char> res;
+    for (int i = 0; i < 9; ++i)
+    {
+        int c = d % 10;
+        d /= 10;
+        res.push_back(int2char(c));
+    }
+    return res;
 }
 
 

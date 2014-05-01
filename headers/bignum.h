@@ -27,20 +27,24 @@ public:
     static Digit parseDigit(const char * str, unsigned int digitsBeg, unsigned int nextDigitEnd);
     int toInt() const;
     int signum() const;
+    std::string getDisplay() const;
 private:
 
     BigNum(Sign s, std::vector<Digit> ds);
-
-    void removeLeadingZeros();
-    void ensureFormIsCorrect();
-    void ensureDigitsNotEmpty();
-    void ensureZeroIsOneDigit();
 
     template <typename inttype>
     void setSign(inttype number);
 
     template <typename uinttype>
     void setFromNumber(uinttype number);
+
+    void removeLeadingZeros();
+    void ensureFormIsCorrect();
+    void ensureDigitsNotEmpty();
+    void ensureZeroIsOneDigit();
+
+    std::vector<char> getDisplayAsVector() const;
+    std::vector<char> getDigitReversed(Digit d) const;
 
     std::vector<Digit> digits;
     Sign sign;
