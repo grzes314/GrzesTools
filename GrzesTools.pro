@@ -14,4 +14,7 @@ INCLUDEPATH += /usr/include/gtest
 DEPENDPATH += /usr/include/gtest
 
 HEADERS += \
-    headers/bignum.h
+    headers/bignum.h \
+    headers/BigNumException.h
+
+QMAKE_CXXFLAGS += -std=c++11
