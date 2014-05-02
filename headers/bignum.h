@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <cstdint>
-#include "headers/BigNumException.h"
+#include "headers/bignumexception.h"
 
 namespace grzes
 {

@@ -22,6 +22,7 @@ class BigNumTest : public ::testing::Test
   BigNum millionOne = 1000000001;
   BigNum negMillionOne = -1000000001;
   BigNum millionTwo = 1000000002;
+  BigNum millionsSum = 2000000003;
   BigNum millionsMult = 1000000003000000002LL;
 };
 
@@ -49,9 +50,9 @@ TEST_F(BigNumTest, DisplayWorks)
     EXPECT_EQ(string("1000000003000000002"), millionsMult.getDisplay());
 }
 
-TEST_F(BigNumTest, ParsingWorks)
+TEST_F(BigNumTest, ParsingOfValidStringsWorks)
 {
-    BigNum b = BigNum::parse("1000000001");
+    BigNum b = BigNum::parse("+1000000001");
     EXPECT_EQ(string("1000000001"), b.getDisplay());
     b = BigNum::parse("-1000000001");
     EXPECT_EQ(string("-1000000001"), b.getDisplay());
@@ -61,6 +62,16 @@ TEST_F(BigNumTest, ParsingWorks)
     EXPECT_EQ(string("0"), b.getDisplay());
     b = BigNum::parse("1000000003000000002");
     EXPECT_EQ(string("1000000003000000002"), b.getDisplay());
+}
+
+TEST_F(BigNumTest, ParsingThrowsOnInvalidStrings)
+{
+    EXPECT_THROW(BigNum::parse(""), BigNumException);
+    EXPECT_THROW(BigNum::parse("-"), BigNumException);
+    EXPECT_THROW(BigNum::parse("+"), BigNumException);
+    EXPECT_THROW(BigNum::parse("12.31"), BigNumException);
+    EXPECT_THROW(BigNum::parse("--2312"), BigNumException);
+    EXPECT_THROW(BigNum::parse("84957-4259"), BigNumException);
 }
 
 }  // namespace

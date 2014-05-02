@@ -1,4 +1,5 @@
 #include "headers/bignum.h"
+#include "headers/bignumparseexception.h"
 #include <cstring>
 
 namespace grzes
@@ -83,18 +84,20 @@ BigNum BigNum::parse(const char * str)
     try {
         sign = parseSign(str, n, i);
         i++;
-    } catch (const BigNumException& ex) {}
+    } catch (const BigNumException&) {}
     const vector<Digit> digits = parseDigits(str, n, i);
+    if (digits.empty())
+        throw BigNumParseException("BigNum::parse -> Parse error. No digits in string.");
     return BigNum(sign, digits);
 }
 
 BigNum::Sign BigNum::parseSign(const char * str, int strLen, int i)
 {
     if (i >= strLen)
-        throw BigNumException("BigNum::parseSign -> Parse error.");
+        throw BigNumParseException("BigNum::parseSign -> Parse error.");
     if (str[i] == '+' || str[i] == '-')
         return (str[i] == '+' ? Sign::PLUS : Sign::MINUS);
-    throw BigNumException("BigNum::parseSign -> Parse error.");
+    throw BigNumParseException("BigNum::parseSign -> Parse error.");
 }
 
 int char2int(char c)

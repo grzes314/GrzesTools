@@ -15,7 +15,9 @@ DEPENDPATH += /usr/include/gtest
 
 HEADERS += \
     headers/bignum.h \
-    headers/BigNumException.h
+    headers/grzestoolsexception.h \
+    headers/bignumexception.h \
+    headers/bignumparseexception.h
 
 QMAKE_CXXFLAGS += -std=c++11 \
                   -pedantic
