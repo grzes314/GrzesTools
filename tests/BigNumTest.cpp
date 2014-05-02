@@ -5,6 +5,7 @@
 namespace {
 
 using namespace grzes;
+using namespace std;
 
 class BigNumTest : public ::testing::Test
 {
@@ -16,13 +17,50 @@ class BigNumTest : public ::testing::Test
   virtual void SetUp() {}
 
   virtual void TearDown() {}
+
+  BigNum zero = 0;
+  BigNum millionOne = 1000000001;
+  BigNum negMillionOne = -1000000001;
+  BigNum millionTwo = 1000000002;
+  BigNum millionsMult = 1000000003000000002LL;
 };
 
-// Tests that the Foo::Bar() method does Abc.
 TEST_F(BigNumTest, ToIntWorksWithSmallInts)
 {
     BigNum a(5);
     ASSERT_EQ(5, a.toInt());
 }
-//1 000 000 003 000 000 002 = 1 000 000 001 * 1 000 000 002
+
+TEST_F(BigNumTest, SignumWorks)
+{
+    EXPECT_EQ(0, BigNum(0).signum());
+    EXPECT_EQ(-1, BigNum(-20).signum());
+    EXPECT_EQ(1, BigNum(230).signum());
+    EXPECT_EQ(0, BigNum("0").signum());
+    EXPECT_EQ(-1, BigNum("-20").signum());
+    EXPECT_EQ(1, BigNum("230").signum());
+}
+
+TEST_F(BigNumTest, DisplayWorks)
+{
+    EXPECT_EQ(string("1000000001"), millionOne.getDisplay());
+    EXPECT_EQ(string("-1000000001"), negMillionOne.getDisplay());
+    EXPECT_EQ(string("0"), zero.getDisplay());
+    EXPECT_EQ(string("1000000003000000002"), millionsMult.getDisplay());
+}
+
+TEST_F(BigNumTest, ParsingWorks)
+{
+    BigNum b = BigNum::parse("1000000001");
+    EXPECT_EQ(string("1000000001"), b.getDisplay());
+    b = BigNum::parse("-1000000001");
+    EXPECT_EQ(string("-1000000001"), b.getDisplay());
+    b = BigNum::parse("0");
+    EXPECT_EQ(string("0"), b.getDisplay());
+    b = BigNum::parse("-0");
+    EXPECT_EQ(string("0"), b.getDisplay());
+    b = BigNum::parse("1000000003000000002");
+    EXPECT_EQ(string("1000000003000000002"), b.getDisplay());
+}
+
 }  // namespace

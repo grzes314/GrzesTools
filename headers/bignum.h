@@ -21,10 +21,11 @@ public:
     BigNum(long long number);
     BigNum(BigNum&& original);
     BigNum(const char *str);
+    BigNum& operator=(const BigNum&) = default;
     static BigNum parse(const char *str);
-    static Sign parseSign(const char *str, size_t strLen, unsigned int i);
-    static std::vector<Digit> parseDigits(const char *str, size_t strLen, unsigned int digitsBeg);
-    static Digit parseDigit(const char * str, unsigned int digitsBeg, unsigned int nextDigitEnd);
+    static Sign parseSign(const char *str, int strLen, int i);
+    static std::vector<Digit> parseDigits(const char *str, size_t strLen, int digitsBeg);
+    static Digit parseDigit(const char * str, int digitsBeg, int nextDigitEnd);
     int toInt() const;
     int signum() const;
     std::string getDisplay() const;
@@ -41,10 +42,10 @@ private:
     void removeLeadingZeros();
     void ensureFormIsCorrect();
     void ensureDigitsNotEmpty();
-    void ensureZeroIsOneDigit();
+    void ensureZeroHasProperForm();
 
     std::vector<char> getDisplayAsVector() const;
-    std::vector<char> getDigitReversed(Digit d) const;
+    std::vector<char> getDigitReversed(Digit d, bool withLeandingZeros) const;
 
     std::vector<Digit> digits;
     Sign sign;

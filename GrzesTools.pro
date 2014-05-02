@@ -17,4 +17,5 @@ HEADERS += \
     headers/bignum.h \
     headers/BigNumException.h
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 \
+                  -pedantic

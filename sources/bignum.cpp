@@ -27,14 +27,12 @@ void BigNum::setFromNumber(inttype number)
 {
     if (number < 0)
         throw "BigNum::setFromNumber -> internal error. Argument should be greater or equal zero.";
-    Digit fst = number % base;
-    Digit snd = number / base;
-    Digit thd = snd / base;
-    digits.push_back(fst);
-    if (snd > 0)
-        digits.push_back(snd);
-    if (thd > 0)
-        digits.push_back(thd);
+    do
+    {
+        Digit d = number % base;
+        digits.push_back(d);
+        number /= base;
+    } while (number > 0);
 }
 
 template <typename inttype>
@@ -80,17 +78,17 @@ BigNum::BigNum(const char * str)
 BigNum BigNum::parse(const char * str)
 {
     size_t n = strlen(str);
-    unsigned int i = 0;
+    int i = 0;
     Sign sign = Sign::PLUS;
     try {
         sign = parseSign(str, n, i);
         i++;
-    } catch (BigNumException& ex) {}
+    } catch (const BigNumException& ex) {}
     const vector<Digit> digits = parseDigits(str, n, i);
     return BigNum(sign, digits);
 }
 
-BigNum::Sign BigNum::parseSign(const char * str, size_t strLen, unsigned int i)
+BigNum::Sign BigNum::parseSign(const char * str, int strLen, int i)
 {
     if (i >= strLen)
         throw BigNumException("BigNum::parseSign -> Parse error.");
@@ -104,10 +102,10 @@ int char2int(char c)
     return c - '0';
 }
 
-vector<BigNum::Digit> BigNum::parseDigits(const char * str, size_t strLen, unsigned int digitsBeg)
+vector<BigNum::Digit> BigNum::parseDigits(const char * str, size_t strLen, int digitsBeg)
 {
     vector<Digit> digits;
-    unsigned int j = strLen-1;
+    int j = strLen-1;
     while (j >= digitsBeg)
     {
         Digit d = parseDigit(str, digitsBeg, j);
@@ -118,12 +116,16 @@ vector<BigNum::Digit> BigNum::parseDigits(const char * str, size_t strLen, unsig
 }
 
 
-BigNum::Digit BigNum::parseDigit(const char * str, unsigned int digitsBeg, unsigned int nextDigitEnd)
+BigNum::Digit BigNum::parseDigit(const char * str, int digitsBeg, int nextDigitEnd)
 {
     Digit d = 0;
-    for (int i = 0; i < 9 && digitsBeg <= nextDigitEnd-i; ++i)
+    int nextDigitBeg = nextDigitEnd - 8;
+    if (nextDigitBeg < digitsBeg)
+        nextDigitBeg = digitsBeg;
+    int iterations = nextDigitEnd - nextDigitBeg + 1;
+    for (int i = 0; i < iterations; ++i)
     {
-        int c = char2int(str[i]);
+        int c = char2int(str[nextDigitBeg + i]);
         if (c < 0 || c > 9)
             throw BigNumException("BigNum::parseDigit -> parse error. Not a digit.");
         d *= 10;
@@ -168,17 +170,16 @@ BigNum::BigNum(BigNum::Sign s, vector<BigNum::Digit> ds)
 void BigNum::removeLeadingZeros()
 {
     Digit d = digits[digits.size()-1];
-    while (d == 0)
+    while (digits.size() > 1 && d == 0)
     {
         digits.pop_back();
         d = digits[digits.size()-1];
     }
-    ensureDigitsNotEmpty();
 }
 
 void BigNum::ensureFormIsCorrect()
 {
-    ensureZeroIsOneDigit();
+    ensureZeroHasProperForm();
     ensureDigitsNotEmpty();
     removeLeadingZeros();
 }
@@ -192,21 +193,28 @@ void BigNum::ensureDigitsNotEmpty()
     }
 }
 
-void BigNum::ensureZeroIsOneDigit()
+void BigNum::ensureZeroHasProperForm()
 {
     if (sign == Sign::ZERO)
     {
         digits.clear();
         digits.push_back(0);
     }
+    else if (digits.size() == 1 && digits[0] == 0)
+    {
+        sign = Sign::ZERO;
+    }
 }
 
 std::vector<char> BigNum::getDisplayAsVector() const
 {
     vector<char> res;
-    for (auto it = digits.rbegin(); it != digits.rend(); ++it)
+    if (sign == Sign::MINUS)
+        res.push_back('-');
+    for (auto it = digits.rbegin(); it != digits.rend(); it++)
     {
-        vector<char> d = getDigitReversed(*it);
+        bool withLeadingZeros = it != digits.rbegin();
+        vector<char> d = getDigitReversed(*it, withLeadingZeros);
         res.insert(res.end(), d.rbegin(), d.rend());
     }
     return res;
@@ -217,7 +225,7 @@ char int2char(int c)
     return c + '0';
 }
 
-std::vector<char> BigNum::getDigitReversed(BigNum::Digit d) const
+std::vector<char> BigNum::getDigitReversed(BigNum::Digit d, bool withLeandingZeros) const
 {
     vector<char> res;
     for (int i = 0; i < 9; ++i)
@@ -225,6 +233,8 @@ std::vector<char> BigNum::getDigitReversed(BigNum::Digit d) const
         int c = d % 10;
         d /= 10;
         res.push_back(int2char(c));
+        if (d == 0 && !withLeandingZeros)
+            break;
     }
     return res;
 }
